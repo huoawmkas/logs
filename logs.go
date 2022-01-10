@@ -28,25 +28,27 @@ var log *mylog
  * 初始化
  */
 func init() {
-	log = newMylog()
+	log = new(mylog)
 
 	// default setting
 	log.dir = "../log"
 	log.file = "logs"
 	log.level = LOG_INFO
 }
+
 // # 文件保存路径
 func Init(dir string, file string, level int, savefile bool, prefix ...string) {
-	log.setDir(dir)
-	log.setFile(file)
 	log.setLevel(level)
-	log.setSavefile(savefile)
-
 	if len(prefix) != 0 {
 		log.setPrefix(fmt.Sprintf("[%v] ", prefix[0]))
 	}
-
-	go log.run()
+	if savefile {
+		log.setDir(dir)
+		log.setFile(file)
+		log.setSavefile(savefile)
+		log.log = make(chan string, 100)
+		go log.run()
+	}
 }
 
 func Error(err ...interface{}) {
@@ -115,17 +117,6 @@ type mylog struct {
 	savefile bool        // 是否保存到文件
 	level    int         // 日志级别
 	prefix   string      // 日志前缀
-}
-
-func newMylog() *mylog {
-	log := &mylog{}
-
-	log.log = make(chan string, 100)
-	log.dir = "/opt/logs"
-	log.file = "out"
-	log.savefile = false
-	log.prefix = ""
-	return log
 }
 
 func (l *mylog) setDir(dir string) {
