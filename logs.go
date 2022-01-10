@@ -24,9 +24,7 @@ const (
 
 var log *mylog
 
-/*
- * 初始化
- */
+// 初始化
 func init() {
 	log = new(mylog)
 
@@ -36,7 +34,6 @@ func init() {
 	log.level = LOG_INFO
 }
 
-// # 文件保存路径
 func Init(dir string, file string, level int, savefile bool, prefix ...string) {
 	log.setLevel(level)
 	if len(prefix) != 0 {
